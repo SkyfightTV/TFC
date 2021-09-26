@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "TFC",
+    "slug": "TFC",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
+  "name": "TFC"
+}
