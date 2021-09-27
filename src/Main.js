@@ -1,17 +1,20 @@
-import React from 'react';
-import { Navigator } from 'react-native-navigation'
+import React from 'react'
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from './home/Home'
 import Project from './project/Project'
 
-const nav = Navigator({
-    Home: {screen: Home},
-    Project: {screen: Project}
-})
+const Stack = createNativeStackNavigator();
 
-export default class Main extends React.Component {
-    render() {
-        return (
-            <Home/>
-        )
-    }
+function App() {
+    return (
+        <NavigationContainer>
+            <Stack.Navigator>
+                <Stack.Screen name="Home" component={Home}/>
+                <Stack.Screen name="Project" component={Project}/>
+            </Stack.Navigator>
+        </NavigationContainer>
+    );
 }
+
+export default App;

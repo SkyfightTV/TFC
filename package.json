@@ -19,10 +19,11 @@
     "react-native-gesture-handler": "~1.10.2",
     "react-native-navigation": "^7.21.0",
     "react-native-reanimated": "~2.2.0",
+    "react-native-safe-area-context": "3.2.0",
     "react-native-screens": "~3.4.0",
     "react-native-unimodules": "^0.13.1",
     "react-native-web": "^0.17.1",
-    "react-navigator": "^0.0.0-0",
+    "react-navigation-stack": "^2.10.4",
     "yet": "^0.1.0"
   },
   "devDependencies": {
