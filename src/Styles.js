@@ -5,4 +5,12 @@ export default {
         alignItems: 'center',
         justifyContent: 'center',
     },
+    title: {
+        fontSize: 40,
+        textAlign: 'center',
+        color: 'white',
+    },
+    background: {
+        backgroundColor: '#636363',
+    }
 }
