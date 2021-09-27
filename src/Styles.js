@@ -6,9 +6,10 @@ export default {
         justifyContent: 'center',
     },
     title: {
-        fontSize: 40,
         textAlign: 'center',
         color: 'white',
+        marginHorizontal: 10,
+        marginVertical: 10,
     },
     background: {
         backgroundColor: '#636363',
