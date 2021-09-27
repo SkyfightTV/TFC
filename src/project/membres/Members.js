@@ -1,44 +1,53 @@
 import React from "react";
-import {View, TouchableOpacity, FlatList, SafeAreaView, Text, Button, Modal} from "react-native";
+import {
+    View,
+    TouchableOpacity,
+    FlatList,
+    SafeAreaView,
+    Text,
+    Button,
+    Modal,
+    TextInput,
+} from "react-native";
 
-const DATA = [
-    {
-        id: 0,
-        name: "Antoine",
-        amount: 0.0
-    },
-    {
-        id: 1,
-        name: "Clovis",
-        amount: 0.0
-    },
-    {
-        id: 2,
-        name: "Florent",
-        amount: 0.0
-    }
-];
-
+export const DATA = [];
 
 class Members extends React.Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             title: "NULL",
+            id: 0,
             show: false
         }
     }
 
-    showModal(title) {
+    initModal(title, id) {
+        if (DATA.length === id) {
+            DATA[DATA.length] = {
+                id: id,
+                name: "",
+                amount: 0.0
+            }
+        }
         this.setState({
             title: title,
+            id: id,
             show: true
         })
     }
 
+    removeModal(id, save) {
+        this.setState({
+            show: false
+        })
+        if (!save)
+            DATA.splice(DATA.findIndex(d => d.id === id) , 1)
+    }
+
     renderItem = ({item}) => {
         return (
-            <TouchableOpacity style={styles.title} onPress={() => this.showModal("Edit")}>
+            <TouchableOpacity style={styles.title} onPress={() => this.initModal("Edit", item.id)}>
                 <Text style={styles.item}>{item.name}</Text>
                 <Text style={styles.item}>{item.amount}$</Text>
             </TouchableOpacity>
@@ -48,14 +57,29 @@ class Members extends React.Component {
     render() {
         return (
             <SafeAreaView style={styles.container}>
-                <Button title="Nouveau membre" onPress={() => this.showModal("Ajouté un membre")}/>
+                <Button title="Nouveau membre" onPress={() =>
+                    this.initModal("Ajouté un membre", DATA.length)}/>
                 <FlatList
                     data={DATA}
-                    renderItem={this.renderItem}/>
-                <Modal transparent={true} visible={this.state.show}>
-                    <View style={styles.modal.primary}>
+                    renderItem={this.renderItem}
+                    extraData={this.state.show}/>
+                <Modal
+                    presentationStyle='overFullScreen'
+                    animationType='fade'
+                    transparent={true}
+                    visible={this.state.show}
+                    style={styles.modal.this}>
+                    <View style={styles.modal.first}>
+                        <Text style={styles.modal.text1}>{this.state.title}</Text>
+                        <TextInput
+                            placeholder="Nom du membre"
+                            style={styles.textInput}
+                            onChangeText={(text)=>DATA[this.state.id].name=text}
+                            value={()=>DATA[this.state.id] === null ? "" : DATA[this.state.id].name}
+                        />
                         <View style={styles.modal.second}>
-                            <Text style={textAlign='center'}>{this.state.title}</Text>
+                            <Button title="Supprimer" onPress={()=>this.removeModal(this.state.id, false)}/>
+                            <Button title="Enregistrer" onPress={()=>this.removeModal(this.state.id, true)}/>
                         </View>
                     </View>
                 </Modal>
@@ -71,7 +95,7 @@ const styles = {
     item: {
         padding: 5,
         marginHorizontal: 7,
-        marginVertical:5
+        marginVertical:5,
     },
     title: {
         fontSize: 32,
@@ -79,17 +103,34 @@ const styles = {
         flex: 1,
         flexDirection: 'row'
     },
+    textInput: {
+        marginVertical: 10,
+        height: 40,
+        borderColor: 'gray',
+        paddingHorizontal: 10,
+        backgroundColor: 'white'
+    },
     modal: {
-        primary: {
-            backgroundColor: '#000000aa',
-            flex: 1
+        this: {
+            justifyContent: 'center',
+            alignContent: 'center'
+        },
+        first: {
+            backgroundColor: 'lightgrey',
+            marginHorizontal: 20,
+            borderRadius: 10,
+            padding: 20,
+            marginVertical: 150
+
         },
         second: {
-            backgroundColor: 'white',
-            margin: 50,
-            borderRadius: 10,
-            padding: 40,
-            flex: 1
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginVertical: 10
+        },
+        text1: {
+            textAlign: 'center',
+            fontSize: 25
         }
     }
 };
