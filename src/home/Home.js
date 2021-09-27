@@ -6,7 +6,7 @@ export default class Home extends React.Component {
     render() {
         return (
             <View style={styles.background}>
-                <Button title="Créer une nouvelle soirée" style={styles.title} onPress={() => this.props.navigation.navigate('Menu')}/>
+                <Button title="Créer une nouvelle soirée" style={styles.title} onPress={() => this.props.navigation.navigate('Project')}/>
             </View>
         )
     }

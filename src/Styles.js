@@ -8,10 +8,10 @@ export default {
     title: {
         textAlign: 'center',
         color: 'white',
-        marginHorizontal: 10,
-        marginVertical: 10,
     },
     background: {
         backgroundColor: '#636363',
+        marginTop: 15,
+        marginHorizontally: 15,
     }
 }
