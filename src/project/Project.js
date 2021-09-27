@@ -1,14 +1,20 @@
 import React from 'react';
-import { Text, View } from 'react-native';
-import Styles  from '../Styles';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import Members from "./membres/Members";
+import Objects from "./objects/Objects";
+import Styles from "../Styles";
 
-export default class Project extends React.Component {
-    render() {
-        return (
-            <View style={Styles.container}>
-                <Text>Open up App.js to staon your app!</Text>
-                <Text>Open up App.js to staon your app!</Text>
-            </View>
-        )
-    }
+const Tab = createMaterialTopTabNavigator();
+
+function project() {
+    return (
+        <Tab.Navigator initialRouteName="Members" screenOptions={{headerTitleAlign: 'center', headerStyle: Styles.colors.second, headerTitleStyle: Styles.colors.text}}>
+            <Tab.Screen name="Members" component={Members}/>
+            <Tab.Screen name="Objects" component={Objects} options={{title: "Ma nouvelle soirée"}}/>
+        </Tab.Navigator>
+    );
 }
+
+export default project
+
+
