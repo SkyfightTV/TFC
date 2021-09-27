@@ -9,7 +9,7 @@ const Stack = createNativeStackNavigator();
 function App() {
     return (
         <NavigationContainer>
-            <Stack.Navigator>
+            <Stack.Navigator initialRouteName="Home" screenOptions={{headerTitleAlign: 'center'}}>
                 <Stack.Screen name="Home" component={Home}/>
                 <Stack.Screen name="Project" component={Project}/>
             </Stack.Navigator>
