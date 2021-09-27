@@ -1,5 +1,8 @@
 import React from 'react';
+import render from './main/main'
 
-export default function App() {
-    require('./main/main').start();
+export default class main extends React.Component {
+    render() {
+        render();
+    }
 }
