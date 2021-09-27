@@ -1,52 +1,97 @@
 import React from "react";
-import { FlatList, View, StatusBar, StyleSheet, Text, TouchableOpacity } from "react-native";
-import Styles from "../../Styles";
+import {View, TouchableOpacity, FlatList, SafeAreaView, Text, Button, Modal} from "react-native";
 
 const DATA = [
     {
-        title: "First Item"
+        id: 0,
+        name: "Antoine",
+        amount: 0.0
     },
     {
-        title: "Second Item"
+        id: 1,
+        name: "Clovis",
+        amount: 0.0
     },
     {
-        title: "Third Item"
-    },
-    {
-        title: "Third Item"
+        id: 2,
+        name: "Florent",
+        amount: 0.0
     }
 ];
 
-const Item = ({title, onPress}) => (
-    <TouchableOpacity onPress={onPress} style={[styles.item]}>
-        <Text style={[styles.title]}>{title}</Text>
-    </TouchableOpacity>
-);
 
+class Members extends React.Component {
+    constructor() {
+        super();
+        this.state = {
+            title: "NULL",
+            show: false
+        }
+    }
 
-export default class Members extends React.Component {
+    showModal(title) {
+        this.setState({
+            title: title,
+            show: true
+        })
+    }
+
+    renderItem = ({item}) => {
+        return (
+            <TouchableOpacity style={styles.title} onPress={() => this.showModal("Edit")}>
+                <Text style={styles.item}>{item.name}</Text>
+                <Text style={styles.item}>{item.amount}$</Text>
+            </TouchableOpacity>
+        );
+    };
+
     render() {
         return (
-            <View style={styles.container}>
+            <SafeAreaView style={styles.container}>
+                <Button title="Nouveau membre" onPress={() => this.showModal("Ajouté un membre")}/>
                 <FlatList
                     data={DATA}
-                    renderItem={Item}
-                />
-            </View>
+                    renderItem={this.renderItem}/>
+                <Modal transparent={true} visible={this.state.show}>
+                    <View style={styles.modal.primary}>
+                        <View style={styles.modal.second}>
+                            <Text style={textAlign='center'}>{this.state.title}</Text>
+                        </View>
+                    </View>
+                </Modal>
+            </SafeAreaView>
         );
     }
-}
+};
 
 const styles = {
     container: {
-        flex: 1,
+        flex: 1
     },
     item: {
-        paddingVertical: 1,
+        padding: 5,
         marginHorizontal: 7,
-        backgroundColor: Styles.colors.third
+        marginVertical:5
     },
     title: {
-        fontSize: 40
+        fontSize: 32,
+        justifyContent: 'space-between',
+        flex: 1,
+        flexDirection: 'row'
     },
+    modal: {
+        primary: {
+            backgroundColor: '#000000aa',
+            flex: 1
+        },
+        second: {
+            backgroundColor: 'white',
+            margin: 50,
+            borderRadius: 10,
+            padding: 40,
+            flex: 1
+        }
+    }
 };
+
+export default Members
