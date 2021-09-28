@@ -38,7 +38,8 @@ class Members extends React.Component {
             DATA[id] = {
                 id: id,
                 name: this.state.name,
-                amount: 0.0
+                amount: 0.0,
+                plats: [0]
             }
         } else
             DATA.splice(id,1)
