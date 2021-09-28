@@ -10,10 +10,11 @@ import {
     Modal,
     TextInput,
 } from "react-native";
+import CheckBox from "@react-native-community/checkbox";
 
 export const PLATS = [];
 
-class Members extends React.Component {
+class Objects extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -21,7 +22,6 @@ class Members extends React.Component {
             id: 0,
             name: "",
             amount: 0,
-            members: {},
             show: false,
             refresh: false
         }
@@ -33,8 +33,8 @@ class Members extends React.Component {
             id: id,
             name: PLATS.length > id ? PLATS[id].name : "",
             amount: PLATS.length > id ? PLATS[id].amount : 0,
-            members: PLATS.length > id ? PLATS[id].members : {},
-            show: true
+            show: true,
+            refresh: !this.state.refresh
         })
     }
 
@@ -54,23 +54,34 @@ class Members extends React.Component {
         })
     }
 
+    checkBox(item) {
+        if (item.plats.includes(this.state.id))
+            item.plats.splice(item.plats.findIndex(checkIndex,this.state.id)-1,1)
+        else
+            item.plats[item.plats.length] = this.state.id
+        this.props.onChange(!this.props.checked)
+    }
+
+    membersItem = ({item}) => {
+        return (
+            <TouchableHighlight>
+                <View style={styles.title}>
+                    <CheckBox
+                        onValueChange={() => this.checkBox(item)}
+                        value={item.plats.includes(this.state.id)}
+                        style={styles.item}/>
+                    <Text style={styles.item}>{item.name}</Text>
+                </View>
+            </TouchableHighlight>
+        );
+    };
+
     renderItem = ({item}) => {
         return (
             <TouchableHighlight  onPress={() => this.initModal("Modifier un plat", item.id)}>
                 <View style={styles.title}>
                     <Text style={styles.item}>{item.name}</Text>
                     <Text style={styles.item}>{item.amount}$</Text>
-                </View>
-            </TouchableHighlight>
-        );
-    };
-
-    membersItem = ({item}) => {
-        return (
-            <TouchableHighlight>
-                <View style={styles.title}>
-                    <Button title=" " style={styles.item}/>
-                    <Text style={styles.item}>{item.name}</Text>
                 </View>
             </TouchableHighlight>
         );
@@ -103,14 +114,15 @@ class Members extends React.Component {
                             keyboardType='number-pad'
                             style={styles.amountInput}
                             onChangeText={(text)=>{
-                                if (text === "")
-                                    text = "0"
-                                this.setState({amount: parseFloat(text)})}}
-                            value={this.state.amount+""}/>
+                                this.setState({amount: text === "" ? "" : parseFloat(text)})}}
+                            value={this.state.amount === 0 ? "" : this.state.amount+""}/>
                         <View>
+                            <Text style={styles.modal.text2}>Membres</Text>
                             <FlatList
                                 data={DATA}
-                                renderItem={this.membersItem}/>
+                                renderItem={this.membersItem}
+                                style={styles.modal.flat_list}
+                                extraData={this.state.refresh}/>
                         </View>
                         <View style={styles.modal.second}>
                             <Button title="Supprimer" onPress={()=>this.removeModal(this.state.id, false)}/>
@@ -122,6 +134,10 @@ class Members extends React.Component {
         );
     }
 };
+
+function checkIndex(element) {
+    return element.label == this
+}
 
 const styles = {
     container: {
@@ -163,7 +179,6 @@ const styles = {
             borderRadius: 10,
             padding: 20,
             marginVertical: 150
-
         },
         second: {
             flexDirection: 'row',
@@ -173,8 +188,18 @@ const styles = {
         text1: {
             textAlign: 'center',
             fontSize: 25
+        },
+        text2: {
+            textAlign: 'center',
+            fontSize: 15
+        },
+        flat_list: {
+            borderColor: 'white',
+            borderWidth: 1,
+            borderHeight: 2,
+            marginVertical: 10
         }
     }
 };
 
-export default Members
+export default Objects
