@@ -1,7 +1,7 @@
 import React from "react";
 import {
     View,
-    TouchableOpacity,
+    TouchableHighlight,
     FlatList,
     SafeAreaView,
     Text,
@@ -18,51 +18,56 @@ class Members extends React.Component {
         this.state = {
             title: "NULL",
             id: 0,
-            show: false
+            name: "",
+            show: false,
+            refresh: false,
         }
     }
 
     initModal(title, id) {
-        if (DATA.length === id) {
-            DATA[DATA.length] = {
-                id: id,
-                name: "",
-                amount: 0.0
-            }
-        }
         this.setState({
             title: title,
             id: id,
+            name: DATA.length > id ? DATA[id].name : "",
             show: true
         })
     }
 
     removeModal(id, save) {
+        if (save) {
+            DATA[id] = {
+                id: id,
+                name: this.state.name,
+                amount: 0.0
+            }
+        } else
+            DATA.splice(id,1)
         this.setState({
-            show: false
+            show: false,
+            refresh: !this.state.refresh
         })
-        if (!save)
-            DATA.splice(DATA.findIndex(d => d.id === id) , 1)
     }
 
     renderItem = ({item}) => {
         return (
-            <TouchableOpacity style={styles.title} onPress={() => this.initModal("Edit", item.id)}>
-                <Text style={styles.item}>{item.name}</Text>
-                <Text style={styles.item}>{item.amount}$</Text>
-            </TouchableOpacity>
+            <TouchableHighlight  onPress={() => this.initModal("Modifier un membre", item.id)}>
+                <View style={styles.title}>
+                    <Text style={styles.item}>{item.name}</Text>
+                    <Text style={styles.item}>{item.amount}$</Text>
+                </View>
+            </TouchableHighlight>
         );
     };
 
     render() {
         return (
             <SafeAreaView style={styles.container}>
-                <Button title="Nouveau membre" onPress={() =>
+                <Button title="Ajouté un nouveau Membre" onPress={() =>
                     this.initModal("Ajouté un membre", DATA.length)}/>
                 <FlatList
                     data={DATA}
                     renderItem={this.renderItem}
-                    extraData={this.state.show}/>
+                    extraData={this.state.refresh}/>
                 <Modal
                     presentationStyle='overFullScreen'
                     animationType='fade'
@@ -74,9 +79,8 @@ class Members extends React.Component {
                         <TextInput
                             placeholder="Nom du membre"
                             style={styles.textInput}
-                            onChangeText={(text)=>DATA[this.state.id].name=text}
-                            value={()=>DATA[this.state.id] === null ? "" : DATA[this.state.id].name}
-                        />
+                            onChangeText={(text)=>{this.setState({name: text})}}
+                            value={this.state.name}/>
                         <View style={styles.modal.second}>
                             <Button title="Supprimer" onPress={()=>this.removeModal(this.state.id, false)}/>
                             <Button title="Enregistrer" onPress={()=>this.removeModal(this.state.id, true)}/>
@@ -98,7 +102,7 @@ const styles = {
         marginVertical:5,
     },
     title: {
-        fontSize: 32,
+        fontSize: 50,
         justifyContent: 'space-between',
         flex: 1,
         flexDirection: 'row'
