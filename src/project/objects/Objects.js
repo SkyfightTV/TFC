@@ -1,5 +1,5 @@
 import React from "react";
-import {DATA} from "../membres/Members";
+import Members, {DATA, refresh} from "../membres/Members";
 import {
     View,
     TouchableHighlight,
@@ -22,6 +22,7 @@ class Objects extends React.Component {
             id: 0,
             name: "",
             amount: 0,
+            members: [],
             show: false,
             refresh: false
         }
@@ -33,6 +34,7 @@ class Objects extends React.Component {
             id: id,
             name: PLATS.length > id ? PLATS[id].name : "",
             amount: PLATS.length > id ? PLATS[id].amount : 0,
+            members: PLATS.length > id ? PLATS[id].members : [],
             show: true,
             refresh: !this.state.refresh
         })
@@ -49,17 +51,18 @@ class Objects extends React.Component {
         } else
             PLATS.splice(id,1)
         this.setState({
+            members: [],
             show: false,
             refresh: !this.state.refresh
         })
+        calculatePrice()
     }
 
     checkBox(item) {
-        if (item.plats.includes(this.state.id))
-            item.plats.splice(item.plats.findIndex(checkIndex,this.state.id)-1,1)
+        if (this.state.members.includes(item.id))
+            this.state.members.splice(this.state.members.findIndex(checkIndex, item.id) - 1, 1)
         else
-            item.plats[item.plats.length] = this.state.id
-        this.props.onChange(!this.props.checked)
+            this.state.members[this.state.members.length] = item.id
     }
 
     membersItem = ({item}) => {
@@ -67,8 +70,8 @@ class Objects extends React.Component {
             <TouchableHighlight>
                 <View style={styles.title}>
                     <CheckBox
-                        onValueChange={() => this.checkBox(item)}
-                        value={item.plats.includes(this.state.id)}
+                        onValueChange={()=>this.checkBox(item)}
+                        value={this.state.members.includes(item.id)}
                         style={styles.item}/>
                     <Text style={styles.item}>{item.name}</Text>
                 </View>
@@ -77,11 +80,16 @@ class Objects extends React.Component {
     };
 
     renderItem = ({item}) => {
+        let members=""
+        for(let id in item.members)
+            members+=DATA[id].name+", "
+        members=members.substr(0, members.length-2);
         return (
-            <TouchableHighlight  onPress={() => this.initModal("Modifier un plat", item.id)}>
+            <TouchableHighlight onPress={()=>this.initModal("Modifier un plat", item.id)}>
                 <View style={styles.title}>
                     <Text style={styles.item}>{item.name}</Text>
-                    <Text style={styles.item}>{item.amount}$</Text>
+                    <Text style={styles.item}>{members}</Text>
+                    <Text style={styles.item}>{item.amount}€</Text>
                 </View>
             </TouchableHighlight>
         );
@@ -93,6 +101,10 @@ class Objects extends React.Component {
                 <Button title="Ajouté un nouveau Plat" onPress={() =>
                     this.initModal("Ajouté un plat", PLATS.length)}/>
                 <FlatList
+                    ListEmptyComponent={
+                        <Text style={styles.modal.text1}>Aucun plats</Text>
+                    }
+                    style={styles.flat_list}
                     data={PLATS}
                     renderItem={this.renderItem}
                     extraData={this.state.refresh}/>
@@ -119,6 +131,9 @@ class Objects extends React.Component {
                         <View>
                             <Text style={styles.modal.text2}>Membres</Text>
                             <FlatList
+                                ListEmptyComponent={
+                                    <Text style={styles.modal.text1}>Aucun membres</Text>
+                                }
                                 data={DATA}
                                 renderItem={this.membersItem}
                                 style={styles.modal.flat_list}
@@ -133,10 +148,19 @@ class Objects extends React.Component {
             </SafeAreaView>
         );
     }
-};
+}
 
 function checkIndex(element) {
-    return element.label == this
+    return element.label === this
+}
+
+function calculatePrice() {
+    for(let m in DATA)
+        DATA[m].amount=0
+
+    for(let plat in PLATS)
+        for(let m in PLATS[plat].members)
+            DATA[m].amount+=(PLATS[plat].amount/PLATS[plat].members.length)
 }
 
 const styles = {
@@ -168,6 +192,9 @@ const styles = {
         paddingHorizontal: 10,
         backgroundColor: 'white'
     },
+    flat_list: {
+        backgroundColor: 'gray'
+    },
     modal: {
         this: {
             justifyContent: 'center',
@@ -197,7 +224,8 @@ const styles = {
             borderColor: 'white',
             borderWidth: 1,
             borderHeight: 2,
-            marginVertical: 10
+            marginVertical: 10,
+            maxHeight: 300
         }
     }
 };
