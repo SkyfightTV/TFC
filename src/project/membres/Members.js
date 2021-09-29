@@ -7,8 +7,9 @@ import {
     Text,
     Button,
     Modal,
-    TextInput,
+    TextInput, Platform,
 } from "react-native";
+import Styles from "../../Styles";
 
 export const DATA = [];
 
@@ -19,8 +20,9 @@ class Members extends React.Component {
             title: "NULL",
             id: 0,
             name: "",
+            amount:0,
             show: false,
-            refresh: false,
+            refresh: false
         }
     }
 
@@ -29,6 +31,7 @@ class Members extends React.Component {
             title: title,
             id: id,
             name: DATA.length > id ? DATA[id].name : "",
+            amount: DATA.length > id ? DATA[id].amount : 0,
             show: true
         })
     }
@@ -38,14 +41,13 @@ class Members extends React.Component {
             DATA[id] = {
                 id: id,
                 name: this.state.name,
-                amount: 0.0,
-                plats: [0]
+                amount: this.state.amount
             }
         } else
             DATA.splice(id,1)
         this.setState({
-            show: false,
-            refresh: !this.state.refresh
+            refresh: !this.state.refresh,
+            show: false
         })
     }
 
@@ -54,11 +56,12 @@ class Members extends React.Component {
             <TouchableHighlight  onPress={() => this.initModal("Modifier un membre", item.id)}>
                 <View style={styles.title}>
                     <Text style={styles.item}>{item.name}</Text>
-                    <Text style={styles.item}>{item.amount}$</Text>
+                    <Text style={styles.item}>{item.amount}€</Text>
                 </View>
             </TouchableHighlight>
         );
     };
+
 
     render() {
         return (
@@ -66,9 +69,13 @@ class Members extends React.Component {
                 <Button title="Ajouté un nouveau Membre" onPress={() =>
                     this.initModal("Ajouté un membre", DATA.length)}/>
                 <FlatList
+                    ListEmptyComponent={
+                        <Text style={styles.modal.text1}>Aucun membres</Text>
+                    }
                     data={DATA}
                     renderItem={this.renderItem}
-                    extraData={this.state.refresh}/>
+                    extraData={this.state.refresh}
+                    style={styles.flat_list}/>
                 <Modal
                     presentationStyle='overFullScreen'
                     animationType='fade'
@@ -106,7 +113,9 @@ const styles = {
         fontSize: 50,
         justifyContent: 'space-between',
         flex: 1,
-        flexDirection: 'row'
+        flexDirection: 'row',
+        borderColor: 'gray',
+        backgroundColor: Styles.colors.second
     },
     textInput: {
         marginVertical: 10,
@@ -114,6 +123,9 @@ const styles = {
         borderColor: 'gray',
         paddingHorizontal: 10,
         backgroundColor: 'white'
+    },
+    flat_list: {
+        backgroundColor: 'gray'
     },
     modal: {
         this: {
